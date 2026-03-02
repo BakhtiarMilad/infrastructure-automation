@@ -23,10 +23,10 @@ resource "kubernetes_config_map" "weather_settings" {
 
   data = {
     "weather_config.json" = jsonencode({
-      station_id = "EUMETSAT-DARMSTADT-01"
+      station_id = "EUMETSAT-WEITERSTADT-01"
       frequency  = "5min"
       sensors    = ["temp", "humidity", "cloud_cover"]
-      project    = "VN-26-05-Automation"
+      project    = "IaC-Automation"
     })
   }
 }
@@ -71,7 +71,8 @@ resource "kubernetes_deployment" "nginx" {
           # Hier sagen wir dem Container, WO er die Datei finden soll
           volume_mount {
             name       = "config-volume"
-            mount_path = "/etc/weather"
+            mount_path = "/usr/share/nginx/html/wetter.json"
+            sub_path   = "weather_config.json"
             read_only  = true
           }
         }
