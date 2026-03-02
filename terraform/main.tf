@@ -11,7 +11,7 @@ terraform {
 
 provider "kubernetes" {
   config_path    = "~/.kube/config"
-  config_context = "kind-milad-for-eumetsat"
+  config_context = var.cluster_context
 }
 
 # --- 3. CONFIGMAP (DIE WETTER-KONFIGURATION) ---

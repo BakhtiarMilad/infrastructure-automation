@@ -15,3 +15,7 @@ variable "container_port" {
   type        = number
   default     = 80
 }
+
+variable "cluster_context" {
+  default = "kind-milad"
+}
