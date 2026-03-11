@@ -1,3 +1,12 @@
+terraform {
+  backend "s3" {
+    bucket = "iac-project-tfstate-milad"
+    key = "terraform/state.tfstate"
+    region = "eu-central-1"
+    encrypt = true
+  }
+}
+
 # --- 1. PROVIDER KONFIGURATION ---
 # Wir sagen Terraform, wie es auf den 'kind'-Cluster zugreifen kann.
 terraform {
