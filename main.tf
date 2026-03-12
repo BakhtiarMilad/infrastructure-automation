@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = "iac-project-tfstate-milad"
-    key = "state.tfstate"
-    region = "eu-central-1"
+    bucket  = "iac-project-tfstate-milad"
+    key     = "state.tfstate"
+    region  = "eu-central-1"
     encrypt = true
   }
 }
