@@ -33,7 +33,7 @@ provider "kubernetes" {
 # Das simuliert die Einstellungen für Satelliten-Datenströme.
 resource "kubernetes_config_map_v1" "weather_settings" {
   metadata {
-    name = "weather-config"
+    name      = "weather-config"
     namespace = kubernetes_namespace_v1.weather_ns.metadata[0].name
   }
 
@@ -51,7 +51,7 @@ resource "kubernetes_config_map_v1" "weather_settings" {
 # Das Herzstück: Hier wird die Applikation definiert.
 resource "kubernetes_deployment" "nginx" {
   metadata {
-    name = var.app_name
+    name      = var.app_name
     namespace = kubernetes_namespace_v1.weather_ns.metadata[0].name
   }
 
@@ -72,8 +72,8 @@ resource "kubernetes_deployment" "nginx" {
         # security context auf Pod-Ebene (CKV_K8S_30)
         security_context {
           run_as_non_root = true
-          run_as_user = 101 #standard-ID for the Nginx-User
-          fs_group = 101
+          run_as_user     = 101 #standard-ID for the Nginx-User
+          fs_group        = 101
         }
         # Hier binden wir die ConfigMap als virtuelles Laufwerk (Volume) ein
         volume {
@@ -103,9 +103,9 @@ resource "kubernetes_deployment" "nginx" {
             }
 
             initial_delay_seconds = 15
-            period_seconds = 20
-            timeout_seconds = 5
-            failure_threshold = 3
+            period_seconds        = 20
+            timeout_seconds       = 5
+            failure_threshold     = 3
           }
 
           readiness_probe {
@@ -114,26 +114,26 @@ resource "kubernetes_deployment" "nginx" {
               port = 80
             }
             initial_delay_seconds = 5
-            period_seconds = 10
+            period_seconds        = 10
           }
 
           resources {
             requests = {
-              cpu = "100m" #100 milliCPUs (0.1 Kerne)
+              cpu    = "100m" #100 milliCPUs (0.1 Kerne)
               memory = "128Mi"
             }
 
             limits = {
-              cpu = "500m" #500 milliCPUs (0.5 Kerne)
+              cpu    = "500m" #500 milliCPUs (0.5 Kerne)
               memory = "256MI"
             }
           }
 
           #security context on container level
           security_context {
-            read_only_root_filesystem = true
-            run_as_non_root = true
-            run_as_user = 101
+            read_only_root_filesystem  = true
+            run_as_non_root            = true
+            run_as_user                = 101
             allow_privilege_escalation = false
             capabilities {
               drop = ["ALL"]
@@ -157,8 +157,8 @@ resource "kubernetes_deployment" "nginx" {
             mount_path = "/var/cache/nginx"
           }
           volume_mount {
-          name       = "nginx-run"
-          mount_path = "/var/run"
+            name       = "nginx-run"
+            mount_path = "/var/run"
           }
         }
       }
