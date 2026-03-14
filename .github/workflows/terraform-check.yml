@@ -33,6 +33,10 @@ jobs:
   security_scan:
     name: "Checkov Security Scan"
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # Erlaubt Checkov das Schreiben in das Security-Tab
+      pull-requests: write   # Erlaubt das Kommentieren im PR
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,4 +46,12 @@ jobs:
         with:
           directory: .
           framework: terraform
-          soft_fail: false  # Wenn auf 'false', blockiert Checkov den PR bei Fehlern
+          output_format: cli,sarif # WICHTIG: Erzeugt CLI-Log und SARIF-Datei
+          output_file_path: console,results.sarif
+          soft_fail: true # Damit der Upload-Schritt immer ausgeführt wird
+
+      - name: Upload SARIF file to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() # Lädt Ergebnisse hoch, auch wenn Fehler gefunden wurden
+        with:
+          sarif_file: results.sarif
