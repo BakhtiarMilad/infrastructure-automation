@@ -9,7 +9,8 @@ on:
       - main
 
 jobs:
-  terraform:
+  # Job 1: Syntax und Formatierung
+  lint_and_validate:
     name: "Terraform Lint & Validate"
     runs-on: ubuntu-latest
     steps:
@@ -28,9 +29,17 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: run checkov actions
+  # Job 2: Security Scan (Erscheint nun separat in GitHub)
+  security_scan:
+    name: "Checkov Security Scan"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Checkov
         uses: bridgecrewio/checkov-action@master
         with:
           directory: .
           framework: terraform
-          soft_fail: true
+          soft_fail: false  # Wenn auf 'false', blockiert Checkov den PR bei Fehlern
