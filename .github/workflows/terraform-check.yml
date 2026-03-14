@@ -2,12 +2,15 @@ name: "Terraform Check"
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
+permissions:
+  contents: read         # Erlaubt das Auschecken des Codes
+  pull-requests: write   # Erlaubt Checkov, Kommentare in den PR zu schreiben
+  security-events: write # Erlaubt das Hochladen der SARIF-Ergebnisse (Security Tab)
+#
 jobs:
   # Job 1: Syntax und Formatierung
   lint_and_validate:

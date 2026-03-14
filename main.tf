@@ -96,6 +96,39 @@ resource "kubernetes_deployment" "nginx" {
           image = "nginx:1.25.3@sha256:2bdc49f2f8ae1d8dbdb68ae9f5f48ef746c0721094031f6aa9ebcb726485749a"
           name  = "nginx-container"
 
+          liveness_probe {
+            http_get {
+              path = "/"
+              port = 80
+            }
+
+            initial_delay_seconds = 15
+            period_seconds = 20
+            timeout_seconds = 5
+            failure_threshold = 3
+          }
+
+          readiness_probe {
+            http_get {
+              path = "/"
+              port = 80
+            }
+            initial_delay_seconds = 5
+            period_seconds = 10
+          }
+
+          resources {
+            requests = {
+              cpu = "100m" #100 milliCPUs (0.1 Kerne)
+              memory = "128Mi"
+            }
+
+            limits = {
+              cpu = "500m" #500 milliCPUs (0.5 Kerne)
+              memory = "256MI"
+            }
+          }
+
           #security context on container level
           security_context {
             read_only_root_filesystem = true
