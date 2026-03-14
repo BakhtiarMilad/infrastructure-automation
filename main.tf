@@ -79,7 +79,7 @@ resource "kubernetes_deployment" "nginx" {
         volume {
           name = "config-volume"
           config_map {
-            name = kubernetes_config_map.weather_settings.metadata[0].name
+            name = kubernetes_config_map_v1.weather_settings.metadata[0].name
           }
         }
 
