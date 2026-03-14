@@ -2,12 +2,18 @@ name: "Terraform Check"
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
+    branches: [ main ]
 
+permissions:
+  contents: read         # Erlaubt das Auschecken des Codes
+  pull-requests: write   # Erlaubt Checkov, Kommentare in den PR zu schreiben
+  security-events: write # Erlaubt das Hochladen der SARIF-Ergebnisse (Security Tab)
+#
 jobs:
-  terraform:
+  # Job 1: Syntax und Formatierung
+  lint_and_validate:
     name: "Terraform Lint & Validate"
     runs-on: ubuntu-latest
     steps:
@@ -25,3 +31,30 @@ jobs:
 
       - name: Terraform Validate
         run: terraform validate
+
+  # Job 2: Security Scan (Erscheint nun separat in GitHub)
+  security_scan:
+    name: "Checkov Security Scan"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # Erlaubt Checkov das Schreiben in das Security-Tab
+      pull-requests: write   # Erlaubt das Kommentieren im PR
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          output_format: cli,sarif # WICHTIG: Erzeugt CLI-Log und SARIF-Datei
+          output_file_path: console,results.sarif
+          soft_fail: true # Damit der Upload-Schritt immer ausgeführt wird
+
+      - name: Upload SARIF file to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() # Lädt Ergebnisse hoch, auch wenn Fehler gefunden wurden
+        with:
+          sarif_file: results.sarif
