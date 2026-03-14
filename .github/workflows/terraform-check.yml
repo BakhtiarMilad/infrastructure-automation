@@ -5,6 +5,8 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   terraform:
@@ -25,3 +27,10 @@ jobs:
 
       - name: Terraform Validate
         run: terraform validate
+
+      - name: run checkov actions
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
+          soft_fail: true
